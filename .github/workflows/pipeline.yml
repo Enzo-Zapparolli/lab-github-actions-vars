@@ -1,0 +1,53 @@
+name: Desafio de Variaveis e Escopos
+
+on: workflow_dispatch
+
+env:
+  APP_NAME: "MeuAppIncrivel"
+
+jobs:
+  build_app:
+    name: Build da Aplicacao
+    runs-on: ubuntu-latest
+    env:
+      BUILD_VERSION: "v1.0.0"
+
+    steps:
+      - name: "Passo 1: Variaveis em Escopos Diferentes"
+        env:
+          STEP_TEMP: "Processando..."
+        run: |
+          echo "APP_NAME (Global): $APP_NAME"
+          echo "BUILD_VERSION (Job): $BUILD_VERSION"
+          echo "STEP_TEMP (Step): $STEP_TEMP"
+
+      - name: "Passo 2: Observando o Escopo da STEP_TEMP"
+        run: |
+          echo "APP_NAME (Global): $APP_NAME"
+          echo "BUILD_VERSION (Job): $BUILD_VERSION"
+          echo "STEP_TEMP (Step): ${STEP_TEMP:-NAO_ENCONTRADO}"
+
+      - name: "Passo 3: Auditoria com Variaveis Padrao"
+        run: |
+          echo "O usuario $GITHUB_ACTOR disparou este workflow no repositorio $GITHUB_REPOSITORY. O sistema operacional do runner e $RUNNER_OS."
+
+      - name: "Passo 4: Gerar Codigo Dinamico"
+        id: gerar_codigo
+        run: |
+          RANDOM_NUM=$RANDOM
+          echo "BUILD_HASH=$RANDOM_NUM" >> $GITHUB_ENV
+
+      - name: "Passo 5: Usar Codigo Dinamico"
+        run: |
+          echo "O hash gerado para este build foi: $BUILD_HASH"
+
+  deploy_app:
+    name: Deploy da Aplicacao
+    runs-on: ubuntu-latest
+    needs: build_app
+
+    steps:
+      - name: "Passo 6: Acessando Secrets e Vars"
+        run: |
+          echo "URL do Ambiente: ${{ vars.URL_AMBIENTE }}"
+          echo "API Token (Secret): ${{ secrets.API_TOKEN_PROD }}"
