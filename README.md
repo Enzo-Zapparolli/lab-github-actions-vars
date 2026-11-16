@@ -1,15 +1,21 @@
-# lab-github-actions-vars
+# GitHub Actions — variáveis e escopos
 
-## Respostas da atividade
+**Laboratório educacional.** Explora variáveis globais, por job e por step, além de valores persistidos em `GITHUB_ENV`.
 
-### 1. Por que a Secret aparece no log como *** e a variável aparece normalmente?
+[Portfólio](https://github.com/Enzo-Zapparolli) · [Workflow](.github/workflows/pipeline.yml)
 
-A Secret aparece mascarada como *** porque o GitHub Actions protege automaticamente valores definidos em `secrets`, evitando que informações sensíveis sejam expostas nos logs. Já as variáveis de repositório (`vars`) não são tratadas como segredos, então seus valores aparecem normalmente.
+## O que observar
 
-### 2. O Job deploy_app consegue ler a variável BUILD_VERSION criada no Job build_app? Por quê?
+- `APP_NAME` está no escopo global do workflow.
+- `BUILD_VERSION` existe no job `build_app`.
+- `STEP_TEMP` existe apenas no step que a define.
+- `BUILD_HASH` é persistido para steps posteriores do mesmo job por `GITHUB_ENV`.
+- O segundo job utiliza `needs` e referencia `vars.URL_AMBIENTE` e `secrets.API_TOKEN_PROD`.
 
-Não. O job `deploy_app` não consegue ler `BUILD_VERSION` porque ela foi definida no escopo do job `build_app`. Em GitHub Actions, jobs diferentes executam em runners diferentes, então variáveis de job não são compartilhadas automaticamente entre jobs.
+## Executar
 
-### 3. O que aconteceu com STEP_TEMP no Passo 2?
+Na aba **Actions**, selecione **Desafio de Variaveis e Escopos** e use **Run workflow**. Os valores de vars e secrets dependem da configuração do repositório; não estão incluídos no código.
 
-A variável `STEP_TEMP` não ficou disponível no Passo 2 porque ela foi criada apenas no escopo do Step 1. Variáveis definidas dentro do `env` de um step só existem naquele step específico.
+## Escopo
+
+O job chamado `deploy_app` demonstra variáveis e não realiza implantação. As respostas originais da atividade foram preservadas em [docs/README-anterior.md](docs/README-anterior.md).
